@@ -59,20 +59,25 @@ func (l *Lexer) Peek() rune {
 	return r
 }
 
+// Advance advances the current pointer by n.
+func (l *Lexer) Advance(n int) {
+	l.pos = l.pos + n
+}
+
 // Backup steps back one rune. Can only be called once per call of next.
 func (l *Lexer) Backup() {
 	l.pos--
+}
+
+// Reverts resets the current pointer to the start of the current token.
+func (l *Lexer) Revert() {
+	l.pos = l.start
 }
 
 // Emit passes an item back to the client.
 func (l *Lexer) Emit(t int) {
 	l.Tokens = append(l.Tokens, t)
 	l.start = l.pos
-}
-
-// Skip advances the parsing pointer by n.
-func (l *Lexer) Skip(n int) {
-	l.pos = l.pos + n
 }
 
 // Ignore sets the token start point to the current position.
@@ -96,6 +101,12 @@ func (l *Lexer) AcceptRun(valid string) {
 	l.Backup()
 }
 
-func (l *Lexer) Word() string {
+// LexemLength returns the length of the current token.
+func (l *Lexer) TokenLength() int {
+	return l.pos - l.start
+}
+
+// TokenValue returns the value of the current token.
+func (l *Lexer) TokenValue() string {
 	return l.input[l.start:l.pos]
 }
