@@ -108,5 +108,11 @@ func (l *Lexer) TokenLength() int {
 
 // TokenValue returns the value of the current token.
 func (l *Lexer) TokenValue() string {
-	return l.input[l.start:l.pos]
+	// it is possible to advance beyound the input, so be careful here.
+	end := l.pos
+	if end > len(l.input) {
+		end := len(l.input)
+	}
+
+	return l.input[l.start:end]
 }
