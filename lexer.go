@@ -111,7 +111,7 @@ func (l *Lexer) TokenValue() string {
 	// it is possible to advance beyound the input, so be careful here.
 	end := l.pos
 	if end > len(l.input) {
-		end := len(l.input)
+		end = len(l.input)
 	}
 
 	return l.input[l.start:end]
