@@ -4,16 +4,20 @@ import "strings"
 
 const EOF = -1
 
-// Lexer implements a shellray lexer for the PHP language.
+// Lexer holds the state of the scanner and the emitted tokens.
 type Lexer struct {
-	Tokens []int
+	Tokens []Token
 	input  string
 	length int
 	pos    int // current position in the input
 	start  int // start position of this item
 
 	state StateFn // the next lexing function to enter
-	//width  int     // width of last rune read from input
+}
+
+type Token struct {
+	Type  int
+	Value string
 }
 
 type StateFn func(*Lexer) StateFn
@@ -21,7 +25,7 @@ type StateFn func(*Lexer) StateFn
 // NewLexer creates a new lexer instance for the given data.
 func NewLexer(data string) *Lexer {
 	return &Lexer{
-		Tokens: make([]int, 0),
+		Tokens: make([]Token, 0),
 		input:  data,
 		length: len(data),
 		pos:    0,
@@ -33,7 +37,7 @@ func NewLexer(data string) *Lexer {
 func (l *Lexer) Reset() {
 	l.pos = 0
 	l.start = 0
-	l.Tokens = make([]int, 0)
+	l.Tokens = make([]Token, 0)
 }
 
 // Run runs the state machine for the lexer.
@@ -75,8 +79,8 @@ func (l *Lexer) Revert() {
 }
 
 // Emit passes an item back to the client.
-func (l *Lexer) Emit(t int) {
-	l.Tokens = append(l.Tokens, t)
+func (l *Lexer) Emit(token Token) {
+	l.Tokens = append(l.Tokens, token)
 	l.start = l.pos
 }
 
